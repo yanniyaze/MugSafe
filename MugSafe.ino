@@ -1,13 +1,15 @@
+#include <DS18B20.h>
+
 #include "libraries/led/led.cpp"
+#include "libraries/temperatursensor/simpleMessung.cpp"
+
+DS18B20 ds(2);
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(BLUE, OUTPUT);
-  pinMode(GREEN, OUTPUT);
-  pinMode(RED, OUTPUT);
+  Serial.begin(9600);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  led_rot_gruen_blau();
+  messung(ds);
 }
