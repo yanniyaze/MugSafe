@@ -5,3 +5,8 @@ Allgemeine Regeln was Git angeht:
 3. Wenn Änderungen auf main kommen sollen, dann nur mit Merge Requests.
 4. Ein Merge Request bedarf immer eine Sichtung einer zweiten Person.
 5. Wenn es Fragen gibt, dann Yannik fragen.
+
+
+Instructions to Build:
+
+Install DS18B20.h and OneWire.h libraries.
