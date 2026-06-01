@@ -1,24 +1,34 @@
-#include <DS18B20.h>
+#include "libraries/piezo/buzzer.cpp"
 
-#include "libraries/temperatursensor/tempSens.cpp"
-
-DS18B20 ds(2);
-const float indexTemperature = 30.0;
+#define UP_BUTTON_PIN 6
+#define DOWN_BUTTON_PIN 4
+#define CONFIRM_BUTTON_PIN 2
+#define PIEZO 11
 
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
+  pinMode(PIEZO, OUTPUT);
+  pinMode(UP_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(DOWN_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(CONFIRM_BUTTON_PIN, INPUT_PULLUP);
 }
 
 void loop() {
-  float messung = indexMessung(ds);
-    if (indexTemperature * 1.5 < messung) {
-      // TODO maybe einen Jingle einbauen?
-      Serial.println(ds.getTempC());
-      Serial.println("true");
-    } else {
-      // Fehlerzustand, mit allen weiteren Sachen...
-      Serial.println(ds.getTempC());
-      Serial.println("false");
-    }
+  byte upButtonState = digitalRead(UP_BUTTON_PIN);
+  byte downButtonState = digitalRead(DOWN_BUTTON_PIN);
+  byte confirmButtonState = digitalRead(CONFIRM_BUTTON_PIN);
+
+
+  if (upButtonState == LOW) {
+    playPositive(PIEZO);
+  }
+
+  if (downButtonState == LOW) {
+    playNegative(PIEZO);
+  }
+
+  if (confirmButtonState == LOW) {
+    playConfirm(PIEZO);
+  }
+
+  
 }
