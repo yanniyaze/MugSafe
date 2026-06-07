@@ -5,8 +5,11 @@ const int NOTE_B5 = 988;
 const int NOTE_B4 = 494;  
 const int NOTE_G4 = 392;  
 const int NOTE_C6 = 1047;
+const int NOTE_D6 = 1175;
 const int NOTE_G5 = 784;
 const int NOTE_A5 = 880;
+const int NOTE_E6 = 1318;
+const int NOTE_G6 = 1568;
 
 const int NOTE_F4 = 349;
 const int NOTE_E4 = 330;
@@ -36,6 +39,12 @@ void playNegative(int piezoPin) {
 void playConfirm(int piezoPin) {
   tone(piezoPin, NOTE_C6, 90);
   delay(120);
+  noTone(piezoPin);
+}
+
+void playError(int piezoPin) {
+  tone(piezoPin, NOTE_B3, 320);
+  delay(shortDur + gap);
   noTone(piezoPin);
 }
 
@@ -81,6 +90,26 @@ void playSadMelody(int piezoPin) {
   delay(260);
   tone(piezoPin, NOTE_B3, 420);  
   delay(480);
+
+  noTone(piezoPin);
+}
+
+void playEndMelody3(int piezoPin) {
+  tone(piezoPin, NOTE_G5, 150);
+  delay(180);
+  tone(piezoPin, NOTE_A5, 150);
+  delay(180);
+  tone(piezoPin, NOTE_C6, 150);
+  delay(180);
+  tone(piezoPin, NOTE_E6, 250);
+  delay(300);
+
+  tone(piezoPin, NOTE_D6, 150);
+  delay(180);
+  tone(piezoPin, NOTE_E6, 150);
+  delay(180);
+  tone(piezoPin, NOTE_G6, 300);
+  delay(350);
 
   noTone(piezoPin);
 }
