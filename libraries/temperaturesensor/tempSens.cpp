@@ -14,8 +14,10 @@ float indexMessung(DS18B20 ds) {
 	ausser der Temperatursensor misst fehlerhaft
 */
 bool reachedPreferredTemperature(DS18B20 ds, float preferredTemperature) {
-    while (ds.selectNext()) {
+    
+while (ds.selectNext()) {
       delay(5000);
+      Serial.println(ds.getTempC());
       if (ds.getTempC() <= preferredTemperature) {
         return true;
       }

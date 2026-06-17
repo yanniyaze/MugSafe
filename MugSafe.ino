@@ -5,12 +5,13 @@
 #include "libraries/piezo/buzzer.cpp"
 #include "libraries/led/led.cpp"
 #include "libraries/ultrasonic/ultrasonic.cpp"
+#include "libraries/servo/servo.cpp"
 
-#define UP_BUTTON_PIN       10
-#define DOWN_BUTTON_PIN     12
+#define UP_BUTTON_PIN       12
+#define DOWN_BUTTON_PIN     10
 #define CONFIRM_BUTTON_PIN  13
 #define PIEZO_PIN           8
-#define TEMP_SENSOR_PIN     2 //todo
+#define TEMP_SENSOR_PIN     9
 #define SERVO_PIN           3
 #define US_TRIG_PIN         7
 #define US_ECHO_PIN         5
@@ -19,9 +20,9 @@
 #define GREEN_LED_PIN       4
 #define BLUE_LED_PIN        6
 
+
 // Temperatursensor
 DS18B20 ds(TEMP_SENSOR_PIN);
-Servo servo;
 
 // Die Zustaende unserer State-Machine
 enum STATE {
@@ -87,9 +88,6 @@ void setup() {
   pinMode(US_TRIG_PIN, OUTPUT);
   pinMode(US_ECHO_PIN, INPUT);
 
-  // Servomotor
-  servo.attach(SERVO_PIN);
-  servo.write(0);
 }
 
 void loop() {
@@ -106,9 +104,7 @@ void loop() {
         lastMinuteAction = 0;
 
         hasTakenCupOut = false;
-        servo.write(0);
 
-        // servomotor zurückfahren
         currentState = ULTRA_SOUND_CHECK;
         break;
       
@@ -173,34 +169,37 @@ void loop() {
 
         break;
       case CAP_HEIGHT_MGMT:
-        /*
-          Hier muss ueberprueft werden, ob der Deckel des Geraetes nah genug an der Tasse dran ist, das passiert mit dem Temperatursensor. Die Logik ist in tempSens.cpp implementiert.                                                                                                        
-        */
-        int servoIdx = 0;
 
-        while (indexTemperature * 1.5 > indexMessung(ds)) {
-          servo.write(servoIdx += 5); //
-        }
+        //hier wird nach dem confirm die Funktion aufgerufen welche den Deckel inkl. Thermometer nach unten zur Tasse fährt 
+        moveDown(SERVO_PIN);
 
-        currentState = TEMP_WAIT; // TODO
+        currentState = TEMP_WAIT;
         break;
+
       case TEMP_WAIT:
         /*
           Hier wird mittels Polling gemessen, ob unsere Wunschtemperatur erreicht wurde. Die Logik ist in tempSens.cpp implementiert.
           BeispielCode siehe unten
         */
-        if (reachedPreferredTemperature(ds, preferredTemperature)) {
-          // positiven Jingle spielen
-          playEndMelody(PIEZO_PIN);
-          currentState = SUCCESS_OR_NOT;
-          break;
-        } else {
-          // Dieser Fall kann nur eintreten, wenn der Sensor keine Temperatur mehr misst. Daher Fehlerzustand
-          playSadMelody(PIEZO_PIN);
-          currentState = PRE_INIT;
-          break;
+
+        delay(35000);
+
+        while (true) {
+        
+          if (reachedPreferredTemperature(ds, preferredTemperature)) {
+            // positiven Jingle spielen
+            playEndMelody(PIEZO_PIN);
+            currentState = SUCCESS_OR_NOT;
+            break;
+            }
+        
+          //else {
+            //Dieser Fall kann nur eintreten, wenn der Sensor keine Temperatur mehr misst. Daher Fehlerzustand
+            //playSadMelody(PIEZO_PIN);
+            //currentState = PRE_INIT;
+           //break;
+        //}
         }
-      
       case SUCCESS_OR_NOT:
         /*
           Hier wird auf den User Input gewartet, mittels Interrupt. Dabei wird fuer 3 Minuten jede 15s ein Jingle gespielt,
@@ -230,12 +229,14 @@ void loop() {
           /*
           Hier wurde der Button gedrueckt und es wird ein positiver Jingle gespielt
           */
+          moveUp(SERVO_PIN);
           delay(500);
           playEndMelody3(PIEZO_PIN);
         } else {
           /*
           Hier sind die drei Minuten abgelaufen und es wird ein negativer Jingle
           */
+          moveUp(SERVO_PIN);
           delay(5000);
           playSadMelody(PIEZO_PIN);
         }
